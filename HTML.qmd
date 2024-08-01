@@ -1,0 +1,284 @@
+---
+title: "Feriado Fiestas Patrias 2024"
+subtitle: "Informe previo a nivel nacional" 
+author: "Comisión Nacional de Seguridad de Tránsito (CONASET)"
+date: "2024-07-11"
+format:
+  html:
+    toc: true
+    number-sections: true
+---
+
+```{r setup, warning=FALSE, message = FALSE, echo = FALSE}
+# Cargar paquetes
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(readxl)
+library(ggthemes)
+#### Cargar directorio ####
+setwd("C:/Users/JVEGAL/Desktop/diciocho/data/") # Cargar directorio de trabajo
+diciocho <- read_excel("diciocho.xlsx") # Cargar Data Frame
+```
+
+## Evolución de siniestros de tránsito y sus consecuencias
+
+### Feriado Fiestas Patrias
+
+Carabineros de Chile contabiliza los siniestros de tránsito a partir de las 00:00 horas del día previo al feriado hasta las 24 horas del último día.
+
+Los siniestros, fallecidos y lesionados en la celebración del Fiestas Patrias 2024 serán comparados con los ocurridos en el Fiestas Patrias 2019 por la proximidad de fecha y la cantidad de días.
+
+Conaset agrupa las 59 causas de siniestros de tránsito de Carabineros de Chile en 14 grandes grupos de causas. De igual forma, los 25 tipos de siniestros de tránsito de Carabineros de Chile son agrupados en 6 grandes grupos. Estos son: “Atropello”, “Caída”, “Colisión”, “Choque”, “Volcadura” y “Otros”.[^1]
+
+[^1]: Conaset. Glosario de Términos asociados a la Seguridad Vial, 2022.
+
+A continuación, se detallan los siniestros de tránsito ocurridos durante la celebración de Fiestas Patrias y sus consecuencias a nivel nacional.
+
+## Siniestros de tránsito, fallecidos y lesionados a nivel nacional
+
+![Tabla 1: Evolución siniestros de tránsito y sus consecuencias a nivel nacional (2019-2023)](diciocho/data/images/Imagen1.png)
+
+### Feriado Fiestas Patrias (2019-2023)
+
+```{r, message=FALSE, warning=FALSE, include=FALSE}
+#### Grafico 1.Causas Nacional #####
+siniestros <- diciocho %>%
+  group_by(Ano) %>%
+  count(IdAccidente, Región) %>%
+  ungroup()
+Fallecidos <- filter(diciocho, Fallecidos==1)
+Lesionados <- filter(diciocho, Lesionados>=1)
+Fallecidos_año <- filter(Fallecidos, Ano==2019)
+graf4 <- Fallecidos_año %>%
+  group_by(Causa) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=`n`/sum(`n`) * 100)
+graf5 <- Fallecidos_año %>%
+  group_by(Tipo_siniestro) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=`n`/sum(`n`) * 100)
+Lesionados_año <- filter(Lesionados, Ano==2019)
+graf8 <- Lesionados_año %>%
+  group_by(Causa) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=`n`/sum(`n`) * 100)
+graf9 <- Lesionados_año %>%
+  group_by(Tipo_siniestro) %>%
+  count() %>%
+  ungroup() %>%
+  mutate(percentage=`n`/sum(`n`) * 100)
+```
+
+#### Evolución de siniestros de tránsito a nivel nacional (Fiestas Patrias 2019-2023)
+
+```{r, echo=FALSE, fig.height=7, fig.width=15, message=FALSE, warning=FALSE}
+graf1<-ggplot(siniestros,aes(x=Región))+geom_bar(aes(fill=Ano),position="dodge")
+graf1+scale_fill_manual(values=c("#E0EEEE","#CAE1FF","#8DB6CD","#2E86C1","#00688B")) +
+  geom_text(aes(fill=Ano, label = ..count..), stat = "count", position=position_dodge(0.9), vjust = -1, size=3, colour = "black") +
+  ylim(c(0,400)) +
+  ylab("Siniestros de tránsito") + 
+  xlab("Región") + 
+  ggtitle("Gráfico 1: Comparación regional de siniestros de tránsito en Chile (Fiestas Patrias 2019-2023)") + 
+  labs(fill = "Año",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 30, hjust = 1),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+#### Evolución de fallecidos en el tránsito a nivel nacional (Fiestas Patrias 2019-2023)
+
+```{r, echo=FALSE, fig.height=7, fig.width=15, message=FALSE, warning=FALSE}
+graf2<-ggplot(Fallecidos,aes(x=Región))+geom_bar(aes(fill=Ano),position="dodge")
+graf2+scale_fill_manual(values=c("#F4CCCC", "#EEA6A6", "#E87F7F", "#DF4A4A", "#D92323")) +
+  geom_text(aes(fill=Ano, label = ..count..), stat = "count", position=position_dodge(0.9), vjust = -1, size=3, colour = "black") +
+  ylim(c(0,15)) +
+  ylab("Fallecidos") + 
+  xlab("Región") + 
+  ggtitle("Gráfico 2: Comparación regional de fallecidos en el tránsito en Chile (Fiestas Patrias 2019-2023)") + 
+  labs(fill = "Año",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 30, hjust = 1),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+#### Evolución de lesionados en el tránsito a nivel nacional (Fiestas Patrias 2019-2023)
+
+```{r, echo=FALSE, fig.height=7, fig.width=15, message=FALSE, warning=FALSE}
+graf3<-ggplot(Lesionados,aes(x=Región))+geom_bar(aes(fill=Ano),position="dodge")
+graf3+scale_fill_manual(values=c("#C8E6C9", "#8FDF8C","#56CB4E","#0AAE0B","#067907")) +
+  geom_text(aes(fill=Ano, label = ..count..), stat = "count", position=position_dodge(0.9), vjust = -1, size=3, colour = "black") +
+  ylim(c(0,200)) +
+  ylab("Lesionados") + 
+  xlab("Región") + 
+  ggtitle("Gráfico 3: Comparación regional de lesionados en el tránsito en Chile (Fiestas Patrias 2019-2023)") + 
+  labs(fill = "Año",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 30, hjust = 1),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+## Fiestas Patrias 2019 (año de comparación)
+
+### Fallecidos en siniestros de tránsito durante el período de comparación
+
+#### Fallecidos por causa a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(graf4, aes(x=1, y=percentage, fill=Causa)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = paste0(round(percentage,1), "%")),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  theme_void() + scale_fill_brewer(palette = "Reds") +
+  ggtitle("Gráfico 4: Fallecidos en siniestros de tránsito por causa a nivel nacional (2019)") +
+  labs(fill = "Causa",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset")
+```
+
+#### Fallecidos por tipo de siniestro a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(graf5, aes(x=1, y=percentage, fill=Tipo_siniestro)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = paste0(round(percentage,1), "%")),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  theme_void() + scale_fill_brewer(palette = "Reds") +
+  ggtitle("Gráfico 5: Fallecidos en siniestros de tránsito por tipo de siniestro a nivel nacional (2019)") +
+  labs(fill = "Tipo de siniestro",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset")
+```
+
+#### Fallecidos por calidad del usuario a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(data = Fallecidos_año) + 
+  geom_bar(mapping = aes(x = Calidad), fill="red3",width = 0.5) + 
+  geom_text(stat='count', aes(x = Calidad, label = ..count..), vjust = -1) +
+  ylab("Fallecidos") + 
+  xlab("Calidad del usuario") + 
+  ggtitle("Gráfico 6: Fallecidos en siniestros de tránsito por calidad del usuario a nivel nacional (2019)") + 
+  labs(fill = "Calidad del usuario",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 0, hjust = 0.5),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+#### Fallecidos por rango etario a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(data = Fallecidos_año) + 
+  geom_bar(mapping = aes(x = Edad_rango), fill="red3", width = 0.5) + 
+  geom_text(stat='count', aes(x = Edad_rango, label = ..count..), vjust = -1) +
+  scale_y_continuous(labels = scales::number_format(accuracy = 1)) +  # Eliminar decimales
+  ylab("Fallecidos") + 
+  xlab("Edad") + 
+  ggtitle("Gráfico 7: Fallecidos en siniestros de tránsito por rango etario a nivel nacional (2019)") + 
+  labs(fill = "Edad",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 0, hjust = 0.5),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+### Lesionados en siniestros de tránsito durante el período de comparación
+
+#### Lesionados por causa a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(graf8, aes(x=1, y=percentage, fill=Causa)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = paste0(round(percentage,1), "%")),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  scale_fill_manual(values=c("#C8E6C9", "#B5DFB5", "#A2D8A0", "#8FDF8C", "#7CD978",
+                             "#69D263", "#56CB4E", "#43C539", "#30BE25", "#1DB710",
+                             "#0AAE0B", "#09A00A", "#078C08", "#067907")) +
+  ggtitle("Gráfico 8: Lesionados en siniestros de tránsito por causa a nivel nacional (2019)") +
+  labs(fill = "Causa",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset")
+```
+
+#### Lesionados por tipo de siniestro a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(graf9, aes(x=1, y=percentage, fill=Tipo_siniestro)) +
+  geom_bar(stat="identity") +
+  geom_text(aes(label = paste0(round(percentage,1), "%")),
+            position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  theme_void() +
+  scale_fill_manual(values=c("#C8E6C9", "#A2D8A0", "#7CD978", "#56CB4E","#30BE25","#09A00A")) +
+  ggtitle("Gráfico 9: Lesionados en siniestros de tránsito por tipo de siniestro a nivel nacional (2019)") +
+  labs(fill = "Tipo de siniestro",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset")
+```
+
+#### Lesionados por calidad del usuario a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(data = Lesionados_año) + 
+  geom_bar(mapping = aes(x = Calidad), fill="green4",width = 0.5) + 
+  geom_text(stat='count', aes(x = Calidad, label = ..count..), vjust = -1) +
+  ylab("Lesionados") + 
+  xlab("Calidad del usuario") + 
+  ggtitle("Gráfico 10: Lesionados en siniestros de tránsito por calidad del usuario a nivel nacional (2019)") + 
+  labs(fill = "Calidad del usuario",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 0, hjust = 0.5),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
+
+#### Lesionados por rango etario a nivel nacional (2019)
+
+```{r, warning=FALSE, message=FALSE, echo=FALSE, fig.width=10, fig.height=6}
+ggplot(data = Lesionados_año) + 
+  geom_bar(mapping = aes(x = Edad_rango), fill="green4",width = 0.5) + 
+  geom_text(stat='count', aes(x = Edad_rango, label = ..count..), vjust = -1) +
+  ylab("Lesionados") + 
+  xlab("Edad") + 
+  ggtitle("Gráfico 11: Lesionados en siniestros de tránsito por rango etario a nivel nacional (2019)") + 
+  labs(fill = "Edad",
+       caption = "Fuente: Carabineros de Chile - Elaboración: Conaset") +
+  theme_minimal() +   # Tema minimalista
+  theme(
+    axis.text.x = element_text(size = 12, angle = 0, hjust = 0.5),  # Tamaño y ángulo de las etiquetas en el eje x
+    axis.text.y = element_text(size = 12),                         # Tamaño de las etiquetas en el eje y
+    axis.title = element_text(size = 12),                          # Tamaño del texto de los títulos de los ejes
+    plot.title = element_text(size = 12, face = "bold")            # Tamaño y estilo del título del gráfico
+  )
+```
